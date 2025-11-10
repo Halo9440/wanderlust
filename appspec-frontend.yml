@@ -1,0 +1,9 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/wanderlust-frontend
+hooks:
+  ApplicationStart:
+    - location: scripts/start-frontend.sh
+      timeout: 300
