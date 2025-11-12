@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
+      - echo "Setting up environment..."
       - chmod +x scripts/*.sh
       - npm install
       - cd backend && npm install && cd ..
@@ -12,11 +13,14 @@ phases:
 
   build:
     commands:
-      - echo "Building frontend..."
+      - echo "Building application..."
       - cd frontend && npm run build && cd ..
-      - echo "Build completed!"
+      - echo "Verifying scripts are present..."
+      - ls -la scripts/
+      - echo "Build completed at `date`"
 
 artifacts:
   files:
     - '**/*'
   base-directory: .
+  discard-paths: no
