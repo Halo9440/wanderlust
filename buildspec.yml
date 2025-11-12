@@ -3,15 +3,10 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "=== DEBUG: Checking files in build ==="
-      - echo "Current directory: $PWD"
-      - echo "Listing ALL files:"
-      - find . -type f -name "*.sh" | sort
-      - echo "Scripts directory contents:"
+      - echo "Debug started"
+      - ls -la
       - ls -la scripts/
-      - echo "=== Checking specific script files ==="
-      - ls -la scripts/*.sh 2>/dev/null || echo "No .sh files found in scripts/"
-      - echo "=== END DEBUG ==="
+      - echo "Debug completed"
 
 artifacts:
   files:
