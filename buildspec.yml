@@ -5,19 +5,16 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo "Making scripts executable..."
+      - echo "Setting script permissions..."
       - chmod +x scripts/*.sh
-      - echo "Script permissions after chmod:"
-      - ls -la scripts/
       - npm install
       - cd backend && npm install && cd ..
       - cd frontend && npm install && cd ..
 
   build:
     commands:
-      - echo "Building frontend..."
       - cd frontend && npm run build && cd ..
-      - echo "Build completed!"
+      - echo "Build completed successfully!"
 
 artifacts:
   files:
