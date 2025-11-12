@@ -1,18 +1,28 @@
 #!/bin/bash
 cd /home/ubuntu/wanderlust
 
-# Ensure Node.js 18 is available (only if needed)
-if ! command -v node &> /dev/null || [[ $(node -v) != *"v18"* ]]; then
-    echo "Setting up Node.js 18..."
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm use 18
-fi
+# Load NVM
+export NVM_DIR="/home/ubuntu/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm use 18
 
 echo "Node.js version: $(node -v)"
-echo "NPM version: $(npm -v)"
 
-# Rest of your existing commands...
+# Install global dependencies
+echo "Installing global dependencies..."
+npm install -g pm2
+npm install -g typescript
+
+echo "PM2 version: $(pm2 --version)"
+
+# Install project dependencies
+echo "Installing root dependencies..."
 npm install
+
+echo "Installing backend dependencies..."
 cd backend && npm install && cd ..
+
+echo "Installing frontend dependencies..."
 cd frontend && npm install && cd ..
+
+echo "All dependencies installed successfully"
