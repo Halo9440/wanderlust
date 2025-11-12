@@ -2,25 +2,18 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 18
     commands:
-      - echo "Setting up environment..."
-      - chmod +x scripts/*.sh
-      - npm install
-      - cd backend && npm install && cd ..
-      - cd frontend && npm install && cd ..
-
-  build:
-    commands:
-      - echo "Building application..."
-      - cd frontend && npm run build && cd ..
-      - echo "Verifying scripts are present..."
+      - echo "=== DEBUG: Checking files in build ==="
+      - echo "Current directory: $PWD"
+      - echo "Listing ALL files:"
+      - find . -type f -name "*.sh" | sort
+      - echo "Scripts directory contents:"
       - ls -la scripts/
-      - echo "Build completed at `date`"
+      - echo "=== Checking specific script files ==="
+      - ls -la scripts/*.sh 2>/dev/null || echo "No .sh files found in scripts/"
+      - echo "=== END DEBUG ==="
 
 artifacts:
   files:
     - '**/*'
   base-directory: .
-  discard-paths: no
