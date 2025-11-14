@@ -15,11 +15,12 @@ phases:
     commands:
       - cd frontend && npm run build && cd ..
       - echo "Build completed successfully!"
-      - echo "Preparing deployment package..."
-      # Ensure frontend build is copied to backend public
+      - echo "Creating deployment package..."
+      # Ensure backend uses CommonJS (remove type module)
+      - cd backend && echo '{"name":"backend","version":"1.0.0","main":"server.js","scripts":{"start":"node server.js"}}' > package.json && cd ..
+      # Copy frontend build to backend public directory
       - mkdir -p backend/public
-      - cp -r frontend/build/* backend/public/ 2>/dev/null || echo "Frontend build not found, continuing..."
-      - echo "Deployment package ready"
+      - cp -r frontend/build/* backend/public/ 2>/dev/null || echo "Frontend build not found"
 
 artifacts:
   files:
