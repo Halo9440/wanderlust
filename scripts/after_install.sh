@@ -1,15 +1,12 @@
 #!/bin/bash
-cd /home/ubuntu/wanderlust
+echo "AfterInstall - Setting up backend application..."
+cd /var/www/application/wanderlust/backend
 
-# Set up Node.js path
-export NVM_DIR="/home/ubuntu/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm use 18
+# Install production dependencies
+npm install --production
 
-echo "Installing dependencies..."
-npm install
-cd backend && npm install && cd ..
-cd frontend && npm install && cd ..
+# Set proper permissions
+chown -R ubuntu:ubuntu /var/www/application/wanderlust
+chmod -R 755 /var/www/application/wanderlust
 
-echo "Dependencies installed"
-exit 0
+echo "Backend dependencies installed"
