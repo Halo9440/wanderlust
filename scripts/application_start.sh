@@ -6,13 +6,16 @@ cd /var/www/application/wanderlust/backend
 export NODE_ENV=production
 nohup node server.js > /var/log/wanderlust-app.log 2>&1 &
 
-echo "Backend server started on port 3000"
-echo "Check application logs: /var/log/wanderlust-app.log"
+echo "Backend server starting on port 5000..."
+sleep 5
 
-# Wait a bit and check if server is running
-sleep 3
-if pgrep -f "node server.js" > /dev/null; then
-    echo "✅ Backend server is running successfully"
+# Verify server is running
+if curl -s http://localhost:5000 > /dev/null; then
+    echo "✅ Backend server started successfully!"
+    IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
+    echo "🌐 Access your application at: http://$IP:5000"
 else
-    echo "❌ Backend server failed to start. Check logs above."
+    echo "❌ Backend server failed to start"
+    echo "Check logs: tail -f /var/log/wanderlust-app.log"
+    exit 1
 fi
