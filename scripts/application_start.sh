@@ -1,17 +1,18 @@
 #!/bin/bash
-cd /home/ubuntu/wanderlust
+echo "ApplicationStart - Starting backend server..."
+cd /var/www/application/wanderlust/backend
 
-# Set up Node.js path
-export NVM_DIR="/home/ubuntu/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm use 18
+# Start the backend server
+export NODE_ENV=production
+nohup node server.js > /var/log/wanderlust-app.log 2>&1 &
 
-cd backend
+echo "Backend server started on port 3000"
+echo "Check application logs: /var/log/wanderlust-app.log"
 
-echo "Starting application..."
-pm2 stop all || true
-pm2 delete all || true
-pm2 start npm --name "wanderlust-backend" -- start
-
-echo "Application started"
-exit 0
+# Wait a bit and check if server is running
+sleep 3
+if pgrep -f "node server.js" > /dev/null; then
+    echo "✅ Backend server is running successfully"
+else
+    echo "❌ Backend server failed to start. Check logs above."
+fi
