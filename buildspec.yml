@@ -15,19 +15,12 @@ phases:
     commands:
       - cd frontend && npm run build && cd ..
       - echo "Build completed successfully!"
-      - echo "Creating deployment package..."
-      - mkdir -p deploy_package/var/www/application/wanderlust
-      - mkdir -p deploy_package/scripts
-      # Copy entire backend with all its contents
-      - cp -r backend/* deploy_package/var/www/application/wanderlust/backend/
-      # Copy frontend build files to backend public directory
-      - cp -r frontend/build/* deploy_package/var/www/application/wanderlust/backend/public/ 2>/dev/null || echo "Frontend build not found, continuing..."
-      # Copy deployment scripts
-      - cp -r scripts/* deploy_package/scripts/
-      - cp appspec.yml deploy_package/
-      - echo "Deployment package created"
+      - echo "Preparing deployment package..."
+      # Ensure frontend build is copied to backend public
+      - mkdir -p backend/public
+      - cp -r frontend/build/* backend/public/ 2>/dev/null || echo "Frontend build not found, continuing..."
+      - echo "Deployment package ready"
 
 artifacts:
   files:
     - '**/*'
-  base-directory: deploy_package
