@@ -1,8 +1,12 @@
 version: 0.0
 os: linux
 files:
-  - source: /
-    destination: /var/www/application/wanderlust
+  - source: backend/
+    destination: /var/www/application/wanderlust/backend
+  - source: frontend/
+    destination: /var/www/application/wanderlust/frontend
+  - source: scripts/
+    destination: /var/www/application/wanderlust/scripts
 
 hooks:
   BeforeInstall:
@@ -15,5 +19,9 @@ hooks:
       runas: root
   ApplicationStart:
     - location: scripts/application_start.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/application_stop.sh
       timeout: 300
       runas: root
