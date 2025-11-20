@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Installing dependencies..."
+      - cd frontend && npm install
+      - cd ../backend && npm install
+  build:
+    commands:
+      - echo "Building frontend..."
+      - cd frontend && npm run build
+      - echo "Build completed on `date`"
+  post_build:
+    commands:
+      - echo "Creating deployment package..."
+      - mkdir -p deployment
+      - cp -r backend/* deployment/
+      - cp -r frontend/dist deployment/frontend
+      - cp scripts/deploy.sh deployment/
+      - cp appspec.yml deployment/
+      - cd deployment && zip -r ../wanderlust-deployment.zip .
+artifacts:
+  files:
+    - wanderlust-deployment.zip
+  discard-paths: yes
