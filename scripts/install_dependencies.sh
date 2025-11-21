@@ -7,9 +7,13 @@ if ! command -v node &> /dev/null; then
     sudo apt-get install -y nodejs
 fi
 
-# Install backend dependencies
+# Install backend dependencies (for production)
 cd /home/ubuntu/wanderlust/backend
-npm install
+npm install --production
+
+# Install frontend dependencies (for serving)
+cd ../frontend
+npm install --production
 
 # Install PM2 globally
 sudo npm install -g pm2
