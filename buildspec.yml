@@ -4,21 +4,27 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies..."
-      - cd frontend && npm install
-      - cd ../backend && npm install
+      - npm run installer
   build:
     commands:
-      - echo "Building frontend..."
-      - cd frontend && npm run build
+      - echo "Building application..."
+      - npm run build
       - echo "Build completed on `date`"
   post_build:
     commands:
       - echo "Creating deployment package..."
       - mkdir -p deployment
-      - cp -r backend/* deployment/
+      # Copy backend
+      - cp -r backend/dist deployment/backend
+      - cp backend/package.json deployment/
+      - cp backend/package-lock.json deployment/
+      # Copy frontend
       - cp -r frontend/dist deployment/frontend
-      - cp scripts/deploy.sh deployment/
+      - cp frontend/package.json deployment/frontend/
+      # Copy scripts and configs
+      - cp -r scripts deployment/
       - cp appspec.yml deployment/
+      - echo "Creating deployment zip..."
       - cd deployment && zip -r ../wanderlust-deployment.zip .
 artifacts:
   files:
