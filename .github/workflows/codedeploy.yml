@@ -1,0 +1,59 @@
+name: Deploy via CodeDeploy
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  package-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies and build frontend
+        run: |
+          npm ci || true
+          cd backend && npm ci
+          cd ../frontend && npm ci && npm run build
+          cd ..
+
+      - name: Prepare CodeDeploy bundle
+        run: |
+          mkdir -p codedeploy-bundle
+          cp appspec.yml codedeploy-bundle/
+          mkdir -p codedeploy-bundle/scripts
+          cp -r scripts/. codedeploy-bundle/scripts
+          rsync -av --exclude codedeploy-bundle --exclude .git ./ codedeploy-bundle/
+          cd codedeploy-bundle
+          zip -r ../wanderlust-${{ github.sha }}.zip .
+          cd ..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+          role-session-name: wanderlust-deploy
+
+      - name: Upload bundle to S3
+        run: aws s3 cp wanderlust-${{ github.sha }}.zip s3://${{ secrets.S3_BUCKET }}/releases/wanderlust-${{ github.sha }}.zip
+
+      - name: Trigger CodeDeploy deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name "${{ secrets.CODEDEPLOY_APP }}" \
+            --deployment-group-name "${{ secrets.CODEDEPLOY_GROUP }}" \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --s3-location bucket=${{ secrets.S3_BUCKET }},key=releases/wanderlust-${{ github.sha }}.zip,bundleType=zip \
+            --description "Deploy ${{ github.sha }}"
