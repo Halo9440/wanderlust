@@ -2,15 +2,8 @@
 set -e
 cd /home/ubuntu/wanderlust
 
-# Start backend using PM2
-cd backend
-pm2 start server.js --name "wanderlust-backend" --time
-cd ..
-
-# Start frontend using PM2 and serve
-cd frontend
-pm2 start "serve -s dist -l 3000" --name "wanderlust-frontend" --time
-cd ..
+# Start all apps defined in ecosystem.config.js
+pm2 start ecosystem.config.js
 
 # Save PM2 process list and enable startup on reboot
 pm2 save
